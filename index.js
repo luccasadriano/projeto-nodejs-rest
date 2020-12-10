@@ -10,6 +10,7 @@ try {
    Tabelas.init(conexao)
 
    app.listen(3000, () => console.log('Start servidor port 3000'))
+   
 } catch (error) {
    console.log(error)
 }

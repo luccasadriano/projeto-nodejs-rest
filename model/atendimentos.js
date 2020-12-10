@@ -1,3 +1,4 @@
+const axios = require('axios')
 const moment = require('moment')
 const conexao = require('../db/conexao')
 
@@ -37,7 +38,7 @@ class Atendimento {
             if (erro) {
                res.status(400).json(erro)
             } else {
-               res.status(201).json(atendimento)
+               res.status(201).json({...atendimento, id})
             }
          })
       }
@@ -53,36 +54,47 @@ class Atendimento {
       })
    }
    buscaPorId(id, res) {
+
       const sql = `select * from Atendimentos where id = ${id}`
-      conexao.query(sql, id, (erro, resultado) => {
+
+      conexao.query(sql, async (erro, resultado) => {
+
          const atendimento = resultado[0]
+
+         const cpf = atendimento.cliente
+
          if (erro) {
             res.status(400).json(erro)
+
          } else {
+            const { data } = await axios.get(`http://localhost:8082/${cpf}`)
+
+            atendimento.cliente = data
+
             res.status(200).json(atendimento)
          }
       })
    }
    altera(id, valores, res) {
-      if(valores.data){
+      if (valores.data) {
          valores.data = moment(valores.data, 'DD/MM/YYYY').format('YYYY-MM-DD HH:MM:SS')
       }
       const sql = `update Atendimentos set ? where id=?`
       conexao.query(sql, [valores, id], (erro, resultado) => {
-         if(erro){
+         if (erro) {
             res.status(400).json(erro)
-         }else{
-            res.status(200).json({...valores, id})
+         } else {
+            res.status(200).json({ ...valores, id })
          }
       })
    }
-   deleta(id, res){
+   deleta(id, res) {
       const sql = `delete from Atendimentos where id = ?`
-      conexao.query(sql, id, (erro, resultado)=>{
-         if(erro){
+      conexao.query(sql, id, (erro, resultado) => {
+         if (erro) {
             res.status(400).json(erro)
-         }else{
-            res.status(200).json({id})
+         } else {
+            res.status(200).json({ id })
          }
       })
    }
