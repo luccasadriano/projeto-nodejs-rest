@@ -1,8 +1,8 @@
 const customExpress = require('./config/customExpress')
-const conexao = require('./db/conexao')
-const { init } = require('./db/tabelas')
+const conexao = require('./infrastructure/database/conexao')
+const { init } = require('./infrastructure/database/tabelas')
 const app = customExpress()
-const Tabelas = require('./db/tabelas')
+const Tabelas = require('./infrastructure/database/tabelas')
 
 try {
    conexao.connect(console.log('Conectado ao banco de dados com sucesso!'))
